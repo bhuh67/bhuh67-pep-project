@@ -135,7 +135,6 @@ public class SocialMediaController {
         Message postedMessage = messageService.addMessage(message);
         if(postedMessage == null){
             context.status(400);
-            System.out.println("Got here");
         }
         else{
             context.json(mapper.writeValueAsString(postedMessage));
@@ -164,6 +163,19 @@ public class SocialMediaController {
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void getMessageByIDHandler(Context context) {
+        Message message;
+        int id;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            id = Integer.parseInt(context.pathParam("message_id")) ;
+            message = messageService.getMessageById(id);
+            if(message!=null)
+                context.json(mapper.writeValueAsString(message));
+            else    
+                context.json("");
+        } catch (Exception e) {
+            System.out.print(e.getMessage());
+        }
 
     }
 
@@ -172,7 +184,19 @@ public class SocialMediaController {
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void deleteMessageByIDHandler(Context context) {
-
+        Message message;
+        int id;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            id = Integer.parseInt(context.pathParam("message_id")) ;
+            message = messageService.deleteMessageById(id);
+            if(message!=null)
+                context.json(mapper.writeValueAsString(message));
+            else    
+                context.json("");
+        } catch (Exception e) {
+            System.out.print(e.getMessage());
+        }
     }
 
     /*
@@ -180,15 +204,37 @@ public class SocialMediaController {
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void patchMessageByIDHandler(Context context) {
-
+        Message message;
+        int id;
+        ObjectMapper mapper = new ObjectMapper();
+        Message newMessage; //return new message
+        try {
+            id = Integer.parseInt(context.pathParam("message_id")) ;
+            newMessage = mapper.readValue(context.body(), Message.class);
+            message = messageService.editMessageById(id, newMessage.getMessage_text());
+            if(message!=null)
+                context.json(mapper.writeValueAsString(message));
+            else    
+                context.status(400);
+        } catch (Exception e) {
+            System.out.print(e.getMessage());
+        }
     }
 
     /*
-     * Handler for updating a message found by ID
+     * Handler for getting all messages for a given user
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
     private void getAllMessagesByAccount(Context context) {
-
+        ArrayList<Message> messages = new ArrayList<Message>();
+        int id;
+        try {
+            id = Integer.parseInt(context.pathParam("account_id"));
+            messages = messageService.getAllMessagesByAccount(id);
+            context.json(messages);
+        } catch (Exception e) {
+            System.out.println("Debug exception");
+        }
     }
 
 }

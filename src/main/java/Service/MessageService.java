@@ -25,6 +25,26 @@ public class MessageService {
     public ArrayList<Message> getAllMessages() {
         return messageDAO.getAllMessages();
     }
+
+    public Message getMessageById(int id) {
+        return messageDAO.getMessageById(id);
+    }
+
+    public Message deleteMessageById(int id) {
+        return messageDAO.deleteMessageById(id);
+    }
+
+    public Message editMessageById(int id, String newMessage) {
+        if(!newMessage.isEmpty() && newMessage.length() < 255){
+            return messageDAO.editMessageById(id, newMessage);
+        }
+        System.out.println("Failed to update at service level");
+        return null;
+    }
+
+    public ArrayList<Message> getAllMessagesByAccount(int id) {
+        return messageDAO.getAllMessagesByAccount(id);
+    }
     
 
 }
